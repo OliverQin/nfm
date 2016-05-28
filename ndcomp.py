@@ -105,6 +105,17 @@ class NonNegativeDecomposition:
         x0, f, y = scipy.optimize.fmin_l_bfgs_b( self.optFunc, np.random.rand(self.matShape[0]*self.K+self.K*self.matShape[1]), self.optFuncPrime, m=m, pgtol=1e-5, maxiter=maxiter, bounds=[(0, None)] * (self.matShape[0]*self.K+self.K*self.matShape[1]) )
         return self.getParameters()
         
+def EasyDecomp(mat, K, maxiter=250, A=None, x=None):
+    W = np.random.rand(mat.shape[0], K) + 1e-2 if A is None else np.clip(A, 1e-2, None)
+    H = np.random.rand(K, mat.shape[1]) + 1e-2 if x is None else np.clip(x, 1e-2, None)
+    
+    for i in xrange(maxiter):
+        W = W * ( np.dot( mat, H.transpose() ) / np.dot(W, np.dot(H, H.transpose())) )
+        H = H * ( np.dot( W.transpose(), mat ) / np.dot(np.dot(W.transpose(), W), H) )
+        #W, H = nW, nH
+        print '  iter:', i+1, 'RMSE:', ((np.dot(W, H) - mat)**2).mean()**0.5
+    return W, H
+
 if __name__ == '__main__':
     A = ( np.random.rand(100, 2)).astype(np.float32)
     x = ( np.random.rand(2, 2000)).astype(np.float32)

@@ -116,6 +116,7 @@ def EasyDecomp(mat, K, maxiter=250, A=None, x=None):
         print '  iter:', i+1, 'RMSE:', ((np.dot(W, H) - mat)**2).mean()**0.5
     return W, H
 
+
 if __name__ == '__main__':
     A = ( np.random.rand(100, 2)).astype(np.float32)
     x = ( np.random.rand(2, 2000)).astype(np.float32)
